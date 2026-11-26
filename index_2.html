@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ABDO STORE | متجر عبدو الفاخر</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<style>
+:root{--gp:#D4AF37;--gl:#FDE08B;--gg:linear-gradient(135deg,#ECC86A 0%,#FDF0B0 50%,#B8860B 100%);--bg:#0A0A0B;--sf:#121214;--cd:#17171A;--bs:rgba(255,255,255,.08);--bgd:rgba(212,175,55,.35);--mu:#9CA3AF;--r1:8px;--r2:14px;--r3:20px;--rf:9999px}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Cairo',system-ui,sans-serif}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:#fff;padding-bottom:70px;direction:rtl;text-align:right;overflow-x:hidden;line-height:1.5}
+a{text-decoration:none;color:inherit}
+.hidden{display:none!important}
+.gt{background:var(--gg);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;font-weight:800}
+.container{max-width:1120px;margin:0 auto;padding:0 18px}
+.top-bar{background:linear-gradient(90deg,#1c1404,#2a1f05,#1c1404);border-bottom:1px solid rgba(212,175,55,.2);padding:7px 10px;text-align:center;font-size:12px;font-weight:600;color:#f1dfa2;display:flex;align-items:center;justify-content:center;gap:8px}
+header{position:sticky;top:0;z-index:100;background:rgba(10,10,11,.9);border-bottom:1px solid var(--bs);backdrop-filter:blur(16px)}
+.nav{display:flex;justify-content:space-between;align-items:center;padding:14px 0}
+.brand{font-size:1.35rem;font-weight:900;display:flex;align-items:center;gap:10px;letter-spacing:.5px}
+.brand i{color:var(--gp);filter:drop-shadow(0 0 8px var(--gp))}
+.btn-cart{background:rgba(212,175,55,.1);border:1px solid var(--bgd);color:#fff;padding:8px 16px;border-radius:var(--rf);font-weight:700;font-size:13px;display:flex;align-items:center;gap:8px;cursor:pointer}
+.badge{background:var(--gp);color:#000;border-radius:var(--rf);padding:2px 7px;font-size:11px;font-weight:800}
+.mt{background:transparent;border:1px solid var(--bs);color:#fff;padding:8px 12px;border-radius:var(--r2);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.mt:hover{border-color:var(--gp);color:var(--gp)}
+#sidebar{position:fixed;top:0;right:-320px;width:290px;height:100%;background:#0d0d0f;border-left:1px solid var(--bgd);z-index:200;transition:right .35s;padding:24px 20px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:-10px 0 30px rgba(0,0,0,.8)}
+#sidebar.active{right:0}
+.sh,.ch{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--bs);padding-bottom:14px}
+.sl{display:flex;flex-direction:column;gap:12px;margin-top:25px}
+.sl a{color:#D1D5DB;font-size:15px;font-weight:600;padding:12px 14px;border-radius:var(--r2);display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.02)}
+.sl a:hover{background:rgba(212,175,55,.12);color:var(--gl)}
+.hero{margin:25px 0 20px}
+.hero-card{background:radial-gradient(ellipse at 50% -20%,#302409 0%,#111114 70%);border:1px solid var(--bgd);border-radius:var(--r3);padding:40px 24px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.5)}
+.tag{display:inline-flex;align-items:center;gap:6px;background:rgba(212,175,55,.12);border:1px solid var(--bgd);color:var(--gl);padding:5px 14px;border-radius:var(--rf);font-size:12px;font-weight:700;margin-bottom:16px}
+.hero-card h1{font-size:2.4rem;line-height:1.2;margin-bottom:12px}
+.hero-card p{color:#D1D5DB;font-size:1rem;max-width:620px;margin:0 auto 24px;line-height:1.9;font-weight:500;white-space:pre-line}
+.hb{display:flex;justify-content:center;align-items:center;gap:12px;flex-wrap:wrap}
+.b1{background:var(--gg);color:#000;padding:11px 26px;border-radius:var(--rf);font-weight:800;font-size:14px;display:inline-flex;align-items:center;gap:8px;box-shadow:0 4px 15px rgba(212,175,55,.35)}
+.b2{background:#25D366;color:#fff;padding:11px 24px;border-radius:var(--rf);font-weight:700;font-size:14px;display:inline-flex;align-items:center;gap:8px}
+.features{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:18px 0 30px}
+@media(min-width:768px){.features{grid-template-columns:repeat(4,1fr)}}
+.fc{background:var(--sf);border:1px solid var(--bs);border-radius:var(--r2);padding:8px 10px;display:flex;align-items:center;gap:8px}
+.fi{width:34px;height:34px;border-radius:10px;background:rgba(212,175,55,.1);border:1px solid rgba(212,175,55,.25);color:var(--gp);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.ft h4{font-size:12.5px;font-weight:700;line-height:1.3}
+.ft p{font-size:11px;color:var(--mu);line-height:1.3;margin-top:1px}
+.sec-h{display:flex;align-items:center;gap:8px;font-size:1.25rem;font-weight:800;margin-bottom:16px}
+.cats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media(min-width:768px){.cats{grid-template-columns:repeat(4,1fr)}}
+.cat{background:var(--cd);border:1px solid var(--bs);border-radius:var(--r3);padding:26px 10px;text-align:center;cursor:pointer;transition:.25s;color:#fff;display:block}
+.cat:hover{border-color:var(--bgd);transform:translateY(-3px);box-shadow:0 10px 24px rgba(0,0,0,.5)}
+.cat .ic{font-size:2.6rem;display:block;margin-bottom:6px}
+.cat b{display:block;font-size:1.1rem;font-weight:800}
+.cat small{color:var(--mu);font-size:12px}
+.back{display:inline-flex;align-items:center;gap:8px;background:rgba(212,175,55,.1);border:1px solid var(--bgd);color:var(--gl);padding:8px 16px;border-radius:var(--rf);font-weight:700;font-size:13px;margin:20px 0 14px;cursor:pointer}
+.search{position:relative;margin:6px 0 20px}
+.search input{width:100%;padding:13px 44px 13px 16px;background:var(--sf);border:1px solid var(--bs);border-radius:var(--r2);color:#fff;font-size:14px;outline:none}
+.search input:focus{border-color:var(--gp)}
+.search i{position:absolute;top:50%;right:16px;transform:translateY(-50%);color:var(--mu)}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+@media(min-width:680px){.grid{grid-template-columns:repeat(3,1fr);gap:18px}}
+@media(min-width:1024px){.grid{grid-template-columns:repeat(4,1fr);gap:20px}}
+.card{background:var(--cd);border:1px solid var(--bs);border-radius:var(--r3);overflow:hidden;padding:12px;display:flex;flex-direction:column;justify-content:space-between}
+.pimg{width:100%;height:180px;border-radius:var(--r2);overflow:hidden;background:#000;cursor:zoom-in}
+.pimg img{width:100%;height:100%;object-fit:cover}
+.th{display:flex;gap:6px;margin-top:8px;overflow-x:auto;scrollbar-width:none}
+.th::-webkit-scrollbar{display:none}
+.th img{width:38px;height:38px;flex:none;border-radius:8px;object-fit:cover;border:1px solid var(--bs);cursor:zoom-in}
+.pinfo{padding:10px 2px 4px;flex-grow:1}
+.pt{font-size:14px;font-weight:700;margin-bottom:4px}
+.pd{font-size:11.5px;color:var(--mu);line-height:1.5;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;cursor:pointer;white-space:pre-wrap}
+.pd.open{display:block;-webkit-line-clamp:unset}
+.prow{margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,.05)}
+.price{font-size:16px;font-weight:900;color:var(--gl)}
+.cur{font-size:11px;color:var(--gp);margin-right:2px}
+.acts{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px}
+.add{background:rgba(255,255,255,.06);border:1px solid var(--bs);color:#fff;padding:8px;border-radius:var(--r2);font-size:11px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px}
+.add:hover{background:rgba(212,175,55,.15);border-color:var(--gp);color:var(--gl)}
+.buy{background:#059669;border:none;color:#fff;padding:8px;border-radius:var(--r2);font-size:11px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px}
+.lb{position:fixed;inset:0;z-index:500;background:#000;cursor:zoom-out}
+.lbc{display:flex;height:100%;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;touch-action:pan-x pinch-zoom;direction:ltr}
+.lbc::-webkit-scrollbar{display:none}
+.lbs{flex:0 0 100%;height:100%;scroll-snap-align:start;display:flex;align-items:center;justify-content:center}
+.lbs img{max-width:100%;max-height:100%;object-fit:contain}
+#cart{position:fixed;top:0;left:-350px;width:320px;max-width:90%;height:100%;background:#0E0E11;border-right:1px solid var(--bgd);z-index:200;transition:left .35s;padding:24px 20px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:10px 0 35px rgba(0,0,0,.8)}
+#cart.active{left:0}
+.cl{margin-top:18px;max-height:60vh;overflow-y:auto;display:flex;flex-direction:column;gap:10px}
+.cr{display:flex;align-items:center;justify-content:space-between;background:var(--sf);border:1px solid var(--bs);border-radius:var(--r2);padding:10px 12px}
+.ci{display:flex;align-items:center;gap:10px}
+.cimg{width:44px;height:44px;border-radius:var(--r1);object-fit:cover;background:#000}
+.cn{font-size:13px;font-weight:700}
+.cp{font-size:11px;color:var(--gl);margin-top:2px}
+.rm{background:transparent;border:none;color:#EF4444;font-size:15px;cursor:pointer;padding:4px}
+.cb{border-top:1px solid var(--bs);padding-top:16px}
+.ct{display:flex;justify-content:space-between;font-size:14px;margin-bottom:14px;font-weight:700}
+.co{width:100%;background:#059669;color:#fff;border:none;padding:13px;border-radius:var(--r2);font-weight:800;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
+.fab{position:fixed;bottom:22px;right:22px;background:#25D366;color:#fff;width:56px;height:56px;border-radius:var(--rf);display:flex;align-items:center;justify-content:center;font-size:30px;box-shadow:0 8px 24px rgba(37,211,102,.4);z-index:90}
+footer{margin-top:60px;border-top:1px solid var(--bs);padding:30px 0 10px;text-align:center}
+.fcnt{display:flex;flex-direction:column;align-items:center;gap:12px}
+.ftxt{color:var(--mu);font-size:12px;max-width:450px}
+.fcopy{font-size:11px;color:#6B7280;margin-top:15px}
+.empty{grid-column:1/-1;text-align:center;padding:45px 20px;background:var(--sf);border:1px dashed var(--bs);border-radius:var(--r3);color:#bbb}
+</style>
+</head>
+<body>
+<div class="top-bar"><i class="fa-solid fa-gift"></i><span>عروض حصرية وتريندات جديدة أسبوعياً بأسعار الجملة</span></div>
+<header><div class="container nav">
+<button class="mt" onclick="toggleSidebar()" aria-label="القائمة"><i class="fa-solid fa-bars-staggered"></i></button>
+<div class="brand"><i class="fa-solid fa-crown"></i><span class="gt">ABDO STORE</span></div>
+<button class="btn-cart" onclick="toggleCart()"><i class="fa-solid fa-bag-shopping"></i><span>السلة</span><span class="badge" id="cart-badge">0</span></button>
+</div></header>
+
+<div id="sidebar">
+<div>
+<div class="sh"><span class="gt" style="font-size:17px">القائمة الرئيسية</span><button class="mt" onclick="toggleSidebar()" style="padding:6px 10px"><i class="fa-solid fa-xmark"></i></button></div>
+<div class="sl">
+<a href="#hero" onclick="toggleSidebar()"><i class="fa-solid fa-house"></i> الصفحة الرئيسية</a>
+<a href="#cats" onclick="toggleSidebar()"><i class="fa-solid fa-layer-group"></i> الأقسام</a>
+<a href="https://wa.me/201203593861" target="_blank" style="color:#25d366"><i class="fa-brands fa-whatsapp"></i> تواصل عبر الواتساب</a>
+<a href="/admin.html" style="color:var(--gp);margin-top:15px"><i class="fa-solid fa-lock"></i> لوحة الإدارة 🔐</a>
+</div>
+</div>
+<p style="font-size:11px;color:#555;text-align:center">ABDO STORE © جميع الحقوق محفوظة</p>
+</div>
+
+<div class="container">
+<div id="home-view">
+<section class="hero" id="hero"><div class="hero-card">
+<div class="tag"><i class="fa-solid fa-sparkles"></i> تشكيلة حصرية 2026</div>
+<h1 class="gt">ABDO STORE</h1>
+<p>هدف البراند إني أوفرلك كل ما هو جديد وتريند في عالم
+( الساعات_ الكابات_ النظارات _ المحافظ)
+بأقل سعر ممكن 👑</p>
+<div class="hb">
+<a href="#cats" class="b1"><span>تصفح المنتجات</span><i class="fa-solid fa-arrow-down"></i></a>
+<a href="https://wa.me/201203593861" target="_blank" class="b2"><i class="fa-brands fa-whatsapp"></i><span>تواصل معنا فوراً</span></a>
+</div>
+</div></section>
+<div class="features">
+<div class="fc"><div class="fi"><i class="fa-solid fa-shield-halved"></i></div><div class="ft"><h4>ضمان 15 يوم</h4><p>ضد عيوب الصناعة</p></div></div>
+<div class="fc"><div class="fi"><i class="fa-solid fa-truck-fast"></i></div><div class="ft"><h4>شحن سريع</h4><p>لكل المحافظات</p></div></div>
+<div class="fc"><div class="fi"><i class="fa-solid fa-eye"></i></div><div class="ft"><h4>معاينة قبل الاستلام</h4><p>افحص أوردرك براحتك</p></div></div>
+<div class="fc"><div class="fi"><i class="fa-solid fa-box-open"></i></div><div class="ft"><h4>تغليف ممتاز</h4><p>جاهز للإهداء</p></div></div>
+</div>
+<h3 class="sec-h" id="cats"><i class="fa-solid fa-layer-group gt"></i><span>الأقسام</span></h3>
+<div class="cats" id="cats-grid"></div>
+</div>
+
+<div id="cat-view" class="hidden">
+<a class="back" href="#cats"><i class="fa-solid fa-arrow-right"></i> رجوع للأقسام</a>
+<h3 class="sec-h"><span id="cat-title"></span></h3>
+<div class="search"><i class="fa-solid fa-magnifying-glass"></i><input type="text" id="search-input" oninput="renderCat()" placeholder="ابحث في هذا القسم..."></div>
+<div id="products-container" class="grid"></div>
+</div>
+</div>
+
+<div id="cart">
+<div>
+<div class="ch"><span class="gt" style="font-size:16px">سلة المشتريات</span><button class="mt" onclick="toggleCart()" style="padding:6px 10px"><i class="fa-solid fa-xmark"></i></button></div>
+<div id="cart-items" class="cl"></div>
+</div>
+<div class="cb">
+<div class="ct"><span>المجموع الكلي:</span><span id="cart-total" class="gt" style="font-size:17px">0 جنيه</span></div>
+<button onclick="sendCartToWhatsapp()" class="co"><i class="fa-brands fa-whatsapp"></i> تأكيد الطلب عبر الواتساب</button>
+</div>
+</div>
+
+<a href="https://wa.me/201203593861" target="_blank" class="fab" title="تواصل واتساب"><i class="fa-brands fa-whatsapp"></i></a>
+
+<footer><div class="container fcnt">
+<div class="brand"><i class="fa-solid fa-crown"></i><span class="gt">ABDO STORE</span></div>
+<p class="ftxt">وجهتك الأولى لأحدث تريندات الموضة والإكسسوارات الفاخرة بأعلى جودة وأفضل سعر في مصر.</p>
+<p class="fcopy">جميع الحقوق محفوظة © 2026 ABDO STORE</p>
+</div></footer>
+
+<script>
+const firebaseConfig={apiKey:"AIzaSyDbYnc5Nckvu4V65rL1LmArUmGvIWKIa4M",authDomain:"el-wazeer-store.firebaseapp.com",projectId:"el-wazeer-store",storageBucket:"el-wazeer-store.firebasestorage.app",messagingSenderId:"344053990930",appId:"1:344053990930:web:127e356e494928b8a57acb",measurementId:"G-SMX0GF4F5B"};
+firebase.initializeApp(firebaseConfig);
+const db=firebase.firestore();
+const phoneNum="201203593861";
+const CATS=[{k:'watches',t:'ساعات',i:'⌚',w:['ساعة','ساعه']},{k:'caps',t:'كابات',i:'🧢',w:['كاب']},{k:'glasses',t:'نظارات',i:'🕶',w:['نظار']},{k:'wallets',t:'محافظ',i:'👛',w:['محفظ','محافظ']}];
+const OTHER={k:'other',t:'منتجات أخرى',i:'🛍️'};
+let allProducts=[],cart=[];
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const imgsOf=p=>(Array.isArray(p.images)&&p.images.length?p.images:(p.imageUrl?[p.imageUrl]:[])).slice(0,5);
+function catOf(p){
+  if(CATS.some(c=>c.k===p.category))return p.category;
+  const s=((p.name||'')+' '+(p.desc||'')).toLowerCase();
+  for(const c of CATS)if(c.w.some(w=>s.includes(w)))return c.k;
+  return 'other';
+}
+function toggleSidebar(){$('sidebar').classList.toggle('active')}
+function toggleCart(){$('cart').classList.toggle('active')}
+
+db.collection('store_items').orderBy('createdAt','desc').onSnapshot(snap=>{
+  allProducts=[];
+  snap.forEach(d=>allProducts.push({id:d.id,...d.data()}));
+  route();
+});
+
+function route(){
+  const k=location.hash.slice(1);
+  const c=[...CATS,OTHER].find(x=>x.k===k);
+  if(c){
+    $('home-view').classList.add('hidden');$('cat-view').classList.remove('hidden');
+    $('cat-title').innerText=c.i+' '+c.t;
+    renderCat();
+  }else{
+    $('cat-view').classList.add('hidden');$('home-view').classList.remove('hidden');
+    renderCats();
+  }
+}
+window.addEventListener('hashchange',()=>{
+  const k=location.hash.slice(1);
+  if([...CATS,OTHER].some(x=>x.k===k)){$('search-input').value='';route();window.scrollTo(0,0)}
+  else{route();setTimeout(()=>{const el=$(k);if(el)el.scrollIntoView({behavior:'smooth'});else window.scrollTo(0,0)},60)}
+});
+function renderCats(){
+  const n=k=>allProducts.filter(p=>catOf(p)===k).length;
+  const list=[...CATS];if(n('other'))list.push(OTHER);
+  $('cats-grid').innerHTML=list.map(c=>`<a class="cat" href="#${c.k}"><span class="ic">${c.i}</span><b>${c.t}</b><small>${n(c.k)} منتج</small></a>`).join('');
+}
+function renderCat(){
+  const k=location.hash.slice(1),q=($('search-input').value||'').toLowerCase().trim();
+  let list=allProducts.filter(p=>catOf(p)===k);
+  if(q)list=list.filter(p=>(p.name||'').toLowerCase().includes(q)||(p.desc||'').toLowerCase().includes(q));
+  const c=$('products-container');
+  if(!list.length){c.innerHTML='<div class="empty"><i class="fa-solid fa-box-open" style="font-size:38px;color:#555;display:block;margin-bottom:10px"></i>لا توجد منتجات في هذا القسم حالياً</div>';return}
+  c.innerHTML=list.map(card).join('');
+}
+function card(p){
+  const im=imgsOf(p),id=esc(p.id);
+  const th=im.length>1?`<div class="th">${im.map((s,i)=>`<img src="${esc(s)}" alt="" loading="lazy" onclick="openLB('${id}',${i})">`).join('')}</div>`:'';
+  return `<div class="card"><div><div class="pimg" onclick="openLB('${id}',0)"><img src="${esc(im[0]||'')}" alt="${esc(p.name)}" loading="lazy"></div>${th}
+<div class="pinfo"><div class="pt">${esc(p.name)}</div><div class="pd" onclick="this.classList.toggle('open')">${esc(p.desc||'')}</div>
+<div class="prow"><span class="price">${esc(p.price)}</span><span class="cur">جنيه</span></div></div></div>
+<div class="acts"><button onclick="addToCart('${id}')" class="add"><i class="fa-solid fa-plus"></i> السلة</button>
+<button onclick="orderSingle('${id}')" class="buy"><i class="fa-brands fa-whatsapp"></i> طلب</button></div></div>`;
+}
+function openLB(id,i){
+  const p=allProducts.find(x=>x.id===id);if(!p)return;
+  const im=imgsOf(p);if(!im.length)return;
+  const o=document.createElement('div');o.className='lb';o.onclick=closeLB;
+  o.innerHTML='<div class="lbc">'+im.map(s=>`<div class="lbs"><img src="${esc(s)}" alt=""></div>`).join('')+'</div>';
+  document.body.appendChild(o);document.body.style.overflow='hidden';
+  const sc=o.firstChild;sc.scrollLeft=i*sc.clientWidth;
+}
+function closeLB(){document.querySelectorAll('.lb').forEach(e=>e.remove());document.body.style.overflow=''}
+
+function addToCart(id){
+  const p=allProducts.find(x=>x.id===id);if(!p)return;
+  const e=cart.find(c=>c.id===id);
+  if(e)e.qty+=1;else cart.push({id:p.id,name:p.name,price:p.price,img:imgsOf(p)[0]||'',qty:1});
+  updateCart();$('cart').classList.add('active');
+}
+function updateCart(){
+  $('cart-badge').innerText=cart.reduce((s,i)=>s+i.qty,0);
+  $('cart-total').innerText=`${cart.reduce((s,i)=>s+(Number(i.price)||0)*i.qty,0)} جنيه`;
+  const c=$('cart-items');
+  if(!cart.length){c.innerHTML='<p style="text-align:center;color:#666;font-size:13px;padding:35px 0">السلة فارغة حالياً</p>';return}
+  c.innerHTML=cart.map(i=>`<div class="cr"><div class="ci"><img src="${esc(i.img)}" class="cimg" alt="">
+<div><div class="cn">${esc(i.name)}</div><div class="cp">${esc(i.price)} ج × ${i.qty}</div></div></div>
+<button onclick="removeFromCart('${esc(i.id)}')" class="rm" title="حذف"><i class="fa-solid fa-trash-can"></i></button></div>`).join('');
+}
+function removeFromCart(id){cart=cart.filter(c=>c.id!==id);updateCart()}
+function openWA(msg){window.open(`https://wa.me/${phoneNum}?text=${encodeURIComponent(msg)}`,'_blank')}
+function orderSingle(id){
+  const p=allProducts.find(x=>x.id===id);if(!p)return;
+  openWA(`السلام عليكم 👋\nأريد طلب المنتج التالي من *ABDO STORE*:\n📦 *المنتج:* ${p.name}\n💰 *السعر:* ${p.price} جنيه\nيرجى تأكيد التوافر وتفاصيل الشحن.`);
+}
+function sendCartToWhatsapp(){
+  if(!cart.length)return alert("السلة فارغة!");
+  let msg=`السلام عليكم 👋\nأريد تأكيد طلب المنتجات التالية من *ABDO STORE*:\n\n`,total=0;
+  cart.forEach(i=>{const sub=(Number(i.price)||0)*i.qty;total+=sub;msg+=`• ${i.name} (العدد: ${i.qty}) = ${sub} جنيه\n`});
+  msg+=`\n💵 *الإجمالي الكلي:* ${total} جنيه\nيرجى إرسال تفاصيل الشحن والتوصيل.`;
+  openWA(msg);
+}
+route();
+</script>
+</body>
+</html>
