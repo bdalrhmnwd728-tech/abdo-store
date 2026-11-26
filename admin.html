@@ -42,6 +42,10 @@ input[type=file]{padding:10px;cursor:pointer}
 .del{background:rgba(239,68,68,.15);color:#EF4444;border:1px solid rgba(239,68,68,.3);padding:8px 12px;border-radius:var(--r1);font-size:13px;cursor:pointer}
 .del:hover{background:#EF4444;color:#fff}
 .badge{display:inline-flex;align-items:center;gap:6px;background:rgba(212,175,55,.1);border:1px solid var(--bgd);color:var(--gl);padding:4px 12px;border-radius:var(--rf);font-size:11px;font-weight:700;margin-bottom:14px}
+select{width:100%;padding:13px 14px;margin-bottom:16px;background:var(--sf);border:1px solid var(--bs);border-radius:var(--r2);color:#fff;font-size:14px;outline:none}
+.prev{display:flex;gap:6px;flex-wrap:wrap;margin:-8px 0 14px}
+.prev img{width:52px;height:52px;object-fit:cover;border-radius:var(--r1);border:1px solid var(--bgd)}
+.tagc{display:inline-block;font-size:10px;color:var(--gl);border:1px solid var(--bgd);border-radius:var(--rf);padding:0 8px;margin-top:2px}
 </style>
 </head>
 <body>
@@ -98,14 +102,22 @@ input[type=file]{padding:10px;cursor:pointer}
 <div class="stat"><b id="total-count">0</b><span>إجمالي المنتجات المعروضة في المتجر</span></div>
 <div class="card">
 <h3 class="gt" style="font-size:16px;text-align:right;margin-bottom:16px"><i class="fa-solid fa-plus-circle"></i> إضافة منتج جديد</h3>
+<label>القسم:</label>
+<select id="prod-cat">
+<option value="watches">⌚ ساعات</option>
+<option value="caps">🧢 كابات</option>
+<option value="glasses">🕶 نظارات</option>
+<option value="wallets">👛 محافظ</option>
+</select>
 <label>اسم / موديل المنتج:</label>
 <input type="text" id="prod-name" placeholder="مثال: ساعة كاسيو إيديفيس / نظارة ريبان / كاب نيويورك / محفظة جلد">
 <label>مواصفات وتفاصيل المنتج:</label>
 <textarea id="prod-desc" placeholder="أدخل تفاصيل ومميزات المنتج (الخامة، الألوان، المقاس، الملحقات)..."></textarea>
 <label>السعر (بالجنيه):</label>
 <input type="number" id="prod-price" placeholder="مثال: 350">
-<label>صورة المنتج من الموبايل أو الكمبيوتر:</label>
-<input type="file" id="prod-file" accept="image/*">
+<label>صور المنتج (حتى 5 صور، مثلاً كل الألوان):</label>
+<input type="file" id="prod-file" accept="image/*" multiple onchange="showPrev()">
+<div id="prev" class="prev"></div>
 <button onclick="addProduct()" id="save-btn" class="gold"><i class="fa-solid fa-cloud-arrow-up"></i> نشر المنتج في المتجر فوراً</button>
 </div>
 <h3 class="gt" style="font-size:16px;text-align:right;margin-bottom:14px"><i class="fa-solid fa-list-check"></i> المنتجات المعروضة حالياً</h3>
@@ -188,18 +200,28 @@ function compressImage(file,maxW=800,q=.75){
     };
   });
 }
+function showPrev(){
+  const fs=[...$('prod-file').files];
+  if(fs.length>5)alert("الحد الأقصى 5 صور، تم اختيار أول 5 فقط");
+  $('prev').innerHTML=fs.slice(0,5).map(f=>`<img src="${URL.createObjectURL(f)}" alt="">`).join('');
+}
 async function addProduct(){
-  const name=$('prod-name').value.trim(),desc=$('prod-desc').value.trim(),price=$('prod-price').value.trim(),f=$('prod-file'),btn=$('save-btn');
-  if(!name||!price||!f.files[0])return alert("يرجى إدخال اسم المنتج، السعر، واختيار صورة!");
-  btn.innerText="⏳ جاري ضغط ورفع الصورة...";btn.disabled=true;
+  const name=$('prod-name').value.trim(),desc=$('prod-desc').value.trim(),price=$('prod-price').value.trim(),category=$('prod-cat').value;
+  const files=[...$('prod-file').files].slice(0,5),btn=$('save-btn');
+  if(!name||!price||!files.length)return alert("يرجى إدخال اسم المنتج، السعر، واختيار صورة واحدة على الأقل!");
+  btn.innerText="⏳ جاري ضغط ورفع الصور...";btn.disabled=true;
   try{
-    const imageUrl=await compressImage(f.files[0]);
-    await db.collection('store_items').add({name,desc,price,imageUrl,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+    let images=[];
+    for(const f of files)images.push(await compressImage(f,720,.72));
+    if(images.join('').length>880000){images=[];for(const f of files)images.push(await compressImage(f,560,.6))}
+    if(images.join('').length>950000)throw new Error("الصور كبيرة جداً، قلّل عددها أو استخدم صوراً أصغر");
+    await db.collection('store_items').add({name,desc,price,category,images,imageUrl:images[0],createdAt:firebase.firestore.FieldValue.serverTimestamp()});
     alert("🎉 تم نشر المنتج بنجاح في متجر ABDO STORE!");
-    $('prod-name').value='';$('prod-desc').value='';$('prod-price').value='';f.value='';
+    $('prod-name').value='';$('prod-desc').value='';$('prod-price').value='';$('prod-file').value='';$('prev').innerHTML='';
   }catch(err){alert("حدث خطأ أثناء الحفظ: "+err.message)}
   finally{btn.innerHTML='<i class="fa-solid fa-cloud-arrow-up"></i> نشر المنتج في المتجر فوراً';btn.disabled=false}
 }
+const CATN={watches:'⌚ ساعات',caps:'🧢 كابات',glasses:'🕶 نظارات',wallets:'👛 محافظ'};
 let unsub=null;
 function loadProducts(){
   const list=$('products-list');
@@ -208,11 +230,11 @@ function loadProducts(){
     $('total-count').innerText=snap.size;
     if(snap.empty){list.innerHTML='<p style="text-align:center;color:#9CA3AF;font-size:13px;padding:20px">لا توجد منتجات مضافة بعد.</p>';return}
     list.innerHTML=snap.docs.map(d=>{
-      const i=d.data();
-      return `<div class="item"><div class="info"><img src="${esc(i.imageUrl)}" class="pimg" alt="${esc(i.name)}"><div>
+      const i=d.data(),im=(Array.isArray(i.images)&&i.images.length?i.images:[i.imageUrl]).filter(Boolean);
+      return `<div class="item"><div class="info"><img src="${esc(im[0]||'')}" class="pimg" alt=""><div>
 <div style="font-size:14px;font-weight:700">${esc(i.name)}</div>
-<div style="font-size:11px;color:#9CA3AF">${esc(i.desc||'بدون وصف')}</div>
-<div class="gt" style="font-size:13px;margin-top:2px">${esc(i.price)} جنيه</div></div></div>
+<div class="tagc">${esc(CATN[i.category]||'بدون قسم')} · ${im.length} صور</div>
+<div class="gt" style="font-size:13px;font-weight:800;margin-top:2px">${esc(i.price)} جنيه</div></div></div>
 <button onclick="deleteProduct('${esc(d.id)}')" class="del" title="حذف المنتج"><i class="fa-solid fa-trash-can"></i> حذف</button></div>`;
     }).join('');
   });
