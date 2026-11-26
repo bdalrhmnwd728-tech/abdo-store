@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة الإدارة والتحكم | ABDO STORE</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<style>
+:root{--gp:#D4AF37;--gl:#FDE08B;--gg:linear-gradient(135deg,#ECC86A 0%,#FDF0B0 50%,#B8860B 100%);--bg:#0A0A0B;--sf:#121214;--cd:#17171A;--bs:rgba(255,255,255,.08);--bgd:rgba(212,175,55,.35);--r1:8px;--r2:14px;--r3:20px;--rf:9999px}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Cairo',system-ui,sans-serif}
+body{background:var(--bg);color:#fff;padding:20px 16px;direction:rtl;line-height:1.5}
+.gt{background:var(--gg);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;font-weight:800}
+.container{max-width:550px;margin:0 auto}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;background:var(--sf);border:1px solid var(--bs);padding:10px 16px;border-radius:var(--r2)}
+.back{color:var(--gl);text-decoration:none;font-size:13px;font-weight:700;display:flex;align-items:center;gap:6px}
+.card{background:var(--cd);border:1px solid var(--bs);padding:24px;border-radius:var(--r3);margin-bottom:22px;box-shadow:0 10px 30px rgba(0,0,0,.5)}
+h2,h3{margin-bottom:12px;text-align:center}
+p.d{text-align:center;color:#9CA3AF;font-size:13px;margin-bottom:20px;line-height:1.6}
+label{font-size:13px;color:#D1D5DB;margin-bottom:6px;display:block;font-weight:600}
+input,textarea{width:100%;padding:13px 14px;margin-bottom:16px;background:var(--sf);border:1px solid var(--bs);border-radius:var(--r2);color:#fff;font-size:14px;outline:none}
+textarea{resize:vertical;min-height:85px}
+input:focus,textarea:focus{border-color:var(--gp);box-shadow:0 0 10px rgba(212,175,55,.2)}
+input[type=file]{padding:10px;cursor:pointer}
+.gold{width:100%;background:var(--gg);color:#000;font-weight:800;padding:13px;border:none;border-radius:var(--r2);cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 15px rgba(212,175,55,.35);margin-top:8px}
+.gold:disabled{opacity:.5;cursor:not-allowed}
+.sec{background:transparent;border:1px solid var(--bs);color:#9CA3AF;padding:10px;border-radius:var(--r2);width:100%;font-size:13px;font-weight:600;cursor:pointer;margin-top:10px}
+.sec:hover{border-color:var(--gp);color:var(--gl)}
+.hidden{display:none!important}
+.pins{display:flex;justify-content:center;gap:12px;margin:20px 0;direction:ltr}
+.pin{width:54px;height:60px;text-align:center;font-size:26px;font-weight:900;color:var(--gl);background:var(--sf);border:2px solid var(--bs);border-radius:var(--r2);outline:none;padding:0;margin:0}
+.pin:focus{border-color:var(--gp);box-shadow:0 0 15px rgba(212,175,55,.4)}
+.stat{background:var(--sf);border:1px solid var(--bs);padding:14px;border-radius:var(--r2);text-align:center;margin-bottom:18px}
+.stat b{display:block;font-size:24px;font-weight:900;color:var(--gl)}
+.stat span{font-size:12px;color:#9CA3AF}
+.item{display:flex;align-items:center;justify-content:space-between;background:var(--sf);padding:12px 14px;border-radius:var(--r2);margin-bottom:10px;border:1px solid var(--bs)}
+.item:hover{border-color:var(--bgd)}
+.info{display:flex;align-items:center;gap:12px}
+.pimg{width:52px;height:52px;object-fit:cover;border-radius:var(--r1);border:1px solid var(--bgd);background:#000}
+.del{background:rgba(239,68,68,.15);color:#EF4444;border:1px solid rgba(239,68,68,.3);padding:8px 12px;border-radius:var(--r1);font-size:13px;cursor:pointer}
+.del:hover{background:#EF4444;color:#fff}
+.badge{display:inline-flex;align-items:center;gap:6px;background:rgba(212,175,55,.1);border:1px solid var(--bgd);color:var(--gl);padding:4px 12px;border-radius:var(--rf);font-size:11px;font-weight:700;margin-bottom:14px}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="top"><a href="/" class="back"><i class="fa-solid fa-arrow-right"></i> عرض المتجر</a><span style="font-size:12px;color:#9CA3AF;font-weight:600">ABDO STORE Security</span></div>
+
+<div id="login-section" class="card">
+<div style="text-align:center"><span class="badge"><i class="fa-solid fa-shield-halved"></i> نظام حماية ثنائي مشفر</span></div>
+<h2 class="gt"><i class="fa-solid fa-crown"></i> تسجيل دخول الأدمن</h2>
+<p class="d">أدخل بيانات الحساب الخاص بك للوصول إلى لوحة التحكم</p>
+<label>البريد الإلكتروني:</label>
+<input type="email" id="login-email" placeholder="أدخل بريدك الإلكتروني">
+<label>كلمة المرور:</label>
+<input type="password" id="login-pass" placeholder="••••••••">
+<button onclick="handleLoginStep()" class="gold"><span>متابعة للتحقق من رمز PIN</span><i class="fa-solid fa-arrow-left"></i></button>
+<button onclick="showRegister()" class="sec"><i class="fa-solid fa-user-plus"></i> إنشاء حساب جديد وتعيين رمز PIN لأول مرة</button>
+</div>
+
+<div id="pin-section" class="card hidden">
+<div style="text-align:center"><div style="width:65px;height:65px;border-radius:50%;background:rgba(212,175,55,.1);border:1px solid var(--bgd);display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px"><i class="fa-solid fa-lock" style="font-size:28px;color:var(--gp)"></i></div></div>
+<h2 class="gt">التحقق برمز الأمان (PIN)</h2>
+<p class="d">أدخل رمز الـ PIN السري المكون من 4 أرقام لتأكيد الهوية وفتح اللوحة</p>
+<div class="pins">
+<input type="password" maxlength="1" class="pin" id="pin-1" inputmode="numeric" oninput="movePin(1)" onkeydown="pinKey(event,1)">
+<input type="password" maxlength="1" class="pin" id="pin-2" inputmode="numeric" oninput="movePin(2)" onkeydown="pinKey(event,2)">
+<input type="password" maxlength="1" class="pin" id="pin-3" inputmode="numeric" oninput="movePin(3)" onkeydown="pinKey(event,3)">
+<input type="password" maxlength="1" class="pin" id="pin-4" inputmode="numeric" oninput="movePin(4)" onkeydown="pinKey(event,4)">
+</div>
+<button onclick="verifyPin()" class="gold"><i class="fa-solid fa-unlock-keyhole"></i> تأكيد الرمز ودخول اللوحة</button>
+<button onclick="backToLogin()" class="sec"><i class="fa-solid fa-arrow-right"></i> الرجوع للبريد وكلمة المرور</button>
+</div>
+
+<div id="register-section" class="card hidden">
+<div style="text-align:center"><span class="badge"><i class="fa-solid fa-key"></i> إعداد حساب الأدمن والـ PIN</span></div>
+<h2 class="gt">إنشاء بيانات الأدمن</h2>
+<p class="d">قم بتسجيل إيميلك وباسوردك مع رمز PIN مكون من 4 أرقام</p>
+<label>البريد الإلكتروني للأدمن:</label>
+<input type="email" id="reg-email" placeholder="example@gmail.com">
+<label>كلمة المرور الجديدة:</label>
+<input type="password" id="reg-pass" placeholder="اختر كلمة مرور قوية">
+<label>رمز الـ PIN السري (4 أرقام فقط):</label>
+<input type="password" id="reg-pin" maxlength="4" inputmode="numeric" placeholder="مثال: 1234" style="letter-spacing:4px;font-size:16px">
+<label>تأكيد رمز الـ PIN:</label>
+<input type="password" id="reg-pin-confirm" maxlength="4" inputmode="numeric" placeholder="أعد كتابة الـ 4 أرقام" style="letter-spacing:4px;font-size:16px">
+<button onclick="saveNewAdmin()" class="gold"><i class="fa-solid fa-floppy-disk"></i> حفظ الحساب وتفعيل رمز الـ PIN</button>
+<button onclick="backToLogin()" class="sec"><i class="fa-solid fa-arrow-right"></i> لدي حساب بالفعل، تسجيل الدخول</button>
+</div>
+
+<div id="admin-panel" class="hidden">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+<h2 class="gt" style="margin:0;font-size:19px"><i class="fa-solid fa-boxes-stacked"></i> لوحة المنتجات</h2>
+<button onclick="logout()" style="background:rgba(255,255,255,.08);color:#ccc;border:1px solid var(--bs);padding:7px 14px;border-radius:var(--r1);font-size:12px;font-weight:600;cursor:pointer"><i class="fa-solid fa-lock"></i> قفل اللوحة وخروج</button>
+</div>
+<div class="stat"><b id="total-count">0</b><span>إجمالي المنتجات المعروضة في المتجر</span></div>
+<div class="card">
+<h3 class="gt" style="font-size:16px;text-align:right;margin-bottom:16px"><i class="fa-solid fa-plus-circle"></i> إضافة منتج جديد</h3>
+<label>اسم / موديل المنتج:</label>
+<input type="text" id="prod-name" placeholder="مثال: ساعة كاسيو إيديفيس / نظارة ريبان / كاب نيويورك / محفظة جلد">
+<label>مواصفات وتفاصيل المنتج:</label>
+<textarea id="prod-desc" placeholder="أدخل تفاصيل ومميزات المنتج (الخامة، الألوان، المقاس، الملحقات)..."></textarea>
+<label>السعر (بالجنيه):</label>
+<input type="number" id="prod-price" placeholder="مثال: 350">
+<label>صورة المنتج من الموبايل أو الكمبيوتر:</label>
+<input type="file" id="prod-file" accept="image/*">
+<button onclick="addProduct()" id="save-btn" class="gold"><i class="fa-solid fa-cloud-arrow-up"></i> نشر المنتج في المتجر فوراً</button>
+</div>
+<h3 class="gt" style="font-size:16px;text-align:right;margin-bottom:14px"><i class="fa-solid fa-list-check"></i> المنتجات المعروضة حالياً</h3>
+<div id="products-list"></div>
+<div style="text-align:center;margin-top:25px"><button onclick="showRegister()" class="sec" style="display:inline-flex;width:auto;padding:8px 20px;align-items:center;gap:8px"><i class="fa-solid fa-key"></i> تعديل كلمة المرور أو رمز الـ PIN</button></div>
+</div>
+</div>
+
+<script>
+const firebaseConfig={apiKey:"AIzaSyDbYnc5Nckvu4V65rL1LmArUmGvIWKIa4M",authDomain:"el-wazeer-store.firebaseapp.com",projectId:"el-wazeer-store",storageBucket:"el-wazeer-store.firebasestorage.app",messagingSenderId:"344053990930",appId:"1:344053990930:web:127e356e494928b8a57acb",measurementId:"G-SMX0GF4F5B"};
+firebase.initializeApp(firebaseConfig);
+const db=firebase.firestore();
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let auth=null;
+
+async function loadAdminConfig(){
+  try{
+    const doc=await db.collection('admin_security').doc('auth_config').get();
+    if(doc.exists)auth=doc.data();
+  }catch(e){
+    try{const l=localStorage.getItem('abdo_admin_auth');if(l)auth=JSON.parse(l)}catch(_){}
+  }
+}
+loadAdminConfig();
+
+function show(id){['login-section','pin-section','register-section','admin-panel'].forEach(x=>$(x).classList.add('hidden'));$(id).classList.remove('hidden')}
+function showRegister(){show('register-section')}
+function backToLogin(){show('login-section')}
+function logout(){show('login-section');clearPins();$('login-pass').value=''}
+
+async function handleLoginStep(){
+  const email=$('login-email').value.trim(),pass=$('login-pass').value.trim();
+  if(!email||!pass)return alert("يرجى إدخال البريد الإلكتروني وكلمة المرور!");
+  if(!auth)await loadAdminConfig();
+  if(!auth)return alert("لا يوجد حساب بعد. اضغط على إنشاء حساب جديد.");
+  if(email.toLowerCase()!==String(auth.email).toLowerCase()||pass!==auth.pass)return alert("خطأ: البريد الإلكتروني أو كلمة المرور غير صحيحة!");
+  show('pin-section');clearPins();
+  setTimeout(()=>$('pin-1').focus(),150);
+}
+function movePin(n){
+  const v=$('pin-'+n).value;
+  if(v.length===1&&n<4)$('pin-'+(n+1)).focus();
+  if(n===4&&v.length===1)verifyPin();
+}
+function pinKey(e,n){if(e.key==="Backspace"&&!e.target.value&&n>1)$('pin-'+(n-1)).focus()}
+function clearPins(){for(let i=1;i<=4;i++)$('pin-'+i).value=''}
+function verifyPin(){
+  const p=[1,2,3,4].map(i=>$('pin-'+i).value).join('');
+  if(p.length<4)return alert("يرجى إدخال رمز الـ PIN كاملاً (4 أرقام)!");
+  if(p!==String(auth.pin)){alert("❌ رمز الـ PIN غير صحيح! تم رفض الوصول.");clearPins();$('pin-1').focus();return}
+  show('admin-panel');loadProducts();
+}
+async function saveNewAdmin(){
+  const email=$('reg-email').value.trim(),pass=$('reg-pass').value.trim(),pin=$('reg-pin').value.trim(),pc=$('reg-pin-confirm').value.trim();
+  if(!email||!pass||!pin)return alert("يرجى ملء جميع الحقول المطلوبة!");
+  if(pin.length!==4||isNaN(pin))return alert("رمز الـ PIN يجب أن يتكون من 4 أرقام فقط!");
+  if(pin!==pc)return alert("رمز الـ PIN غير متطابق مع التأكيد!");
+  const n={email,pass,pin};
+  try{
+    await db.collection('admin_security').doc('auth_config').set(n);
+    auth=n;
+    alert("تم حفظ بيانات الحساب ورمز الـ PIN بنجاح! 🎉\nيمكنك الآن تسجيل الدخول بها.");
+  }catch(err){
+    alert("تعذر الحفظ: "+err.message);return;
+  }
+  backToLogin();
+}
+function compressImage(file,maxW=800,q=.75){
+  return new Promise(res=>{
+    const r=new FileReader();r.readAsDataURL(file);
+    r.onload=e=>{
+      const img=new Image();img.src=e.target.result;
+      img.onload=()=>{
+        const c=document.createElement('canvas');let w=img.width,h=img.height;
+        if(w>maxW){h=Math.round(h*maxW/w);w=maxW}
+        c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);
+        res(c.toDataURL('image/jpeg',q));
+      };
+    };
+  });
+}
+async function addProduct(){
+  const name=$('prod-name').value.trim(),desc=$('prod-desc').value.trim(),price=$('prod-price').value.trim(),f=$('prod-file'),btn=$('save-btn');
+  if(!name||!price||!f.files[0])return alert("يرجى إدخال اسم المنتج، السعر، واختيار صورة!");
+  btn.innerText="⏳ جاري ضغط ورفع الصورة...";btn.disabled=true;
+  try{
+    const imageUrl=await compressImage(f.files[0]);
+    await db.collection('store_items').add({name,desc,price,imageUrl,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+    alert("🎉 تم نشر المنتج بنجاح في متجر ABDO STORE!");
+    $('prod-name').value='';$('prod-desc').value='';$('prod-price').value='';f.value='';
+  }catch(err){alert("حدث خطأ أثناء الحفظ: "+err.message)}
+  finally{btn.innerHTML='<i class="fa-solid fa-cloud-arrow-up"></i> نشر المنتج في المتجر فوراً';btn.disabled=false}
+}
+let unsub=null;
+function loadProducts(){
+  const list=$('products-list');
+  if(unsub)unsub();
+  unsub=db.collection('store_items').orderBy('createdAt','desc').onSnapshot(snap=>{
+    $('total-count').innerText=snap.size;
+    if(snap.empty){list.innerHTML='<p style="text-align:center;color:#9CA3AF;font-size:13px;padding:20px">لا توجد منتجات مضافة بعد.</p>';return}
+    list.innerHTML=snap.docs.map(d=>{
+      const i=d.data();
+      return `<div class="item"><div class="info"><img src="${esc(i.imageUrl)}" class="pimg" alt="${esc(i.name)}"><div>
+<div style="font-size:14px;font-weight:700">${esc(i.name)}</div>
+<div style="font-size:11px;color:#9CA3AF">${esc(i.desc||'بدون وصف')}</div>
+<div class="gt" style="font-size:13px;margin-top:2px">${esc(i.price)} جنيه</div></div></div>
+<button onclick="deleteProduct('${esc(d.id)}')" class="del" title="حذف المنتج"><i class="fa-solid fa-trash-can"></i> حذف</button></div>`;
+    }).join('');
+  });
+}
+function deleteProduct(id){
+  if(confirm("هل أنت متأكد من حذف هذا المنتج من متجر ABDO STORE؟"))db.collection('store_items').doc(id).delete();
+}
+</script>
+</body>
+</html>
